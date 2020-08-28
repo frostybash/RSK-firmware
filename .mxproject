@@ -14,17 +14,17 @@ CDefines=USE_HAL_DRIVER;STM32F051x8;USE_HAL_DRIVER;USE_HAL_DRIVER;
 [PreviousGenFiles]
 AdvancedFolderStructure=true
 HeaderFileListSize=3
-HeaderFiles#0=D:/Projects_stm/RSK-1-firmware/radella_RF/Core/Inc/stm32f0xx_it.h
-HeaderFiles#1=D:/Projects_stm/RSK-1-firmware/radella_RF/Core/Inc/stm32f0xx_hal_conf.h
-HeaderFiles#2=D:/Projects_stm/RSK-1-firmware/radella_RF/Core/Inc/main.h
+HeaderFiles#0=D:/Projects_stm/RSK-firmware/Core/Inc/stm32f0xx_it.h
+HeaderFiles#1=D:/Projects_stm/RSK-firmware/Core/Inc/stm32f0xx_hal_conf.h
+HeaderFiles#2=D:/Projects_stm/RSK-firmware/Core/Inc/main.h
 HeaderFolderListSize=1
-HeaderPath#0=D:/Projects_stm/RSK-1-firmware/radella_RF/Core/Inc
+HeaderPath#0=D:/Projects_stm/RSK-firmware/Core/Inc
 HeaderFiles=;
 SourceFileListSize=3
-SourceFiles#0=D:/Projects_stm/RSK-1-firmware/radella_RF/Core/Src/stm32f0xx_it.c
-SourceFiles#1=D:/Projects_stm/RSK-1-firmware/radella_RF/Core/Src/stm32f0xx_hal_msp.c
-SourceFiles#2=D:/Projects_stm/RSK-1-firmware/radella_RF/Core/Src/main.c
+SourceFiles#0=D:/Projects_stm/RSK-firmware/Core/Src/stm32f0xx_it.c
+SourceFiles#1=D:/Projects_stm/RSK-firmware/Core/Src/stm32f0xx_hal_msp.c
+SourceFiles#2=D:/Projects_stm/RSK-firmware/Core/Src/main.c
 SourceFolderListSize=1
-SourcePath#0=D:/Projects_stm/RSK-1-firmware/radella_RF/Core/Src
+SourcePath#0=D:/Projects_stm/RSK-firmware/Core/Src
 SourceFiles=;
 

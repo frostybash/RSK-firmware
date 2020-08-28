@@ -60,10 +60,6 @@ void Error_Handler(void);
 /* Private defines -----------------------------------------------------------*/
 #define pll_MOD_Pin GPIO_PIN_0
 #define pll_MOD_GPIO_Port GPIOA
-#define fault_mcu_adc_Pin GPIO_PIN_1
-#define fault_mcu_adc_GPIO_Port GPIOA
-#define rst_pwd_mcu_adc_Pin GPIO_PIN_2
-#define rst_pwd_mcu_adc_GPIO_Port GPIOA
 #define Q2_mcu_Pin GPIO_PIN_3
 #define Q2_mcu_GPIO_Port GPIOA
 #define spi_CE_pll_Pin GPIO_PIN_0
@@ -74,8 +70,6 @@ void Error_Handler(void);
 #define MUX_pll_GPIO_Port GPIOB
 #define CS_bgt_Pin GPIO_PIN_10
 #define CS_bgt_GPIO_Port GPIOB
-#define ADC_SS_Pin GPIO_PIN_12
-#define ADC_SS_GPIO_Port GPIOB
 #define BGT_ANA_Pin GPIO_PIN_11
 #define BGT_ANA_GPIO_Port GPIOA
 /* USER CODE BEGIN Private defines */

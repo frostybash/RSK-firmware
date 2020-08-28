@@ -29,7 +29,6 @@
 DAC_HandleTypeDef hdac1;
 
 SPI_HandleTypeDef hspi1;
-SPI_HandleTypeDef hspi2;
 DMA_HandleTypeDef hdma_spi1_tx;
 
 UART_HandleTypeDef huart1;
@@ -43,7 +42,6 @@ void SystemClock_Config(void);
 static void MX_GPIO_Init(void);
 static void MX_DMA_Init(void);
 static void MX_SPI1_Init(void);
-static void MX_SPI2_Init(void);
 static void MX_USART1_UART_Init(void);
 static void MX_DAC1_Init(void);
 /* USER CODE BEGIN PFP */
@@ -52,9 +50,6 @@ void BGT24MTR_reg(void);
 void TEST(void);
 void LMX2491_Soft_reset(void);
 void LMX2491_write_reg (uint8_t value,uint8_t value1,uint8_t value2);
-void acces_ADAR7251_reg_write (uint16_t R_W, uint16_t addr,uint16_t reg_data);
-void Set_pin_mod_trig_low(void);
-void DAC_triangle ( uint16_t DAC_data);
 void LMX2491_singleTone(void);
 void LMX2491_Saw(void);
 void LMX2491_Saw_kmc4(void);
@@ -63,31 +58,12 @@ void LMX2491_Saw_kmc4(void);
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
-void acces_ADAR7251_reg_write (uint16_t R_W, uint16_t addr,uint16_t reg_data)
-{
-	R_W=R_W;
-	addr=addr;
-	reg_data=reg_data;
-	
-	HAL_GPIO_WritePin(GPIOB, ADC_SS_Pin, GPIO_PIN_RESET);
-	Delay_u(100);
-	HAL_SPI_Transmit(&hspi1,(uint8_t*)&R_W,sizeof(R_W),1000);
-	Delay_u(100);
-	HAL_SPI_Transmit(&hspi1,(uint8_t*)&addr,sizeof(addr),1000);
-	Delay_u(100);
-	HAL_SPI_Transmit(&hspi1,(uint8_t*)&reg_data,sizeof(reg_data),1000);
-	Delay_u(100);
-	HAL_GPIO_WritePin(GPIOB, ADC_SS_Pin, GPIO_PIN_SET);
-}
 
-void Set_pin_mod_trig_low(void)
-{
-	HAL_GPIO_WritePin(GPIOA, pll_MOD_Pin|fault_mcu_adc_Pin|rst_pwd_mcu_adc_Pin, GPIO_PIN_SET);
-	Delay_u(10);
-}
+
+
 void BGT24MTR_reg_init(void)
 {	
-	uint16_t BGT_data1 = 0x0060;
+	uint16_t BGT_data1 = 0x0058;
 	
   
 	HAL_GPIO_WritePin(GPIOB, CS_bgt_Pin, GPIO_PIN_RESET);
@@ -609,7 +585,6 @@ int main(void)
   MX_GPIO_Init();
   MX_DMA_Init();
   MX_SPI1_Init();
-  MX_SPI2_Init();
   MX_USART1_UART_Init();
   MX_DAC1_Init();
   /* USER CODE BEGIN 2 */
@@ -651,14 +626,13 @@ void SystemClock_Config(void)
 
   /** Initializes the CPU, AHB and APB busses clocks 
   */
-  RCC_OscInitStruct.OscillatorType = RCC_OSCILLATORTYPE_HSI|RCC_OSCILLATORTYPE_LSI;
-  RCC_OscInitStruct.HSIState = RCC_HSI_ON;
-  RCC_OscInitStruct.HSICalibrationValue = RCC_HSICALIBRATION_DEFAULT;
+  RCC_OscInitStruct.OscillatorType = RCC_OSCILLATORTYPE_LSI|RCC_OSCILLATORTYPE_HSE;
+  RCC_OscInitStruct.HSEState = RCC_HSE_ON;
   RCC_OscInitStruct.LSIState = RCC_LSI_ON;
   RCC_OscInitStruct.PLL.PLLState = RCC_PLL_ON;
-  RCC_OscInitStruct.PLL.PLLSource = RCC_PLLSOURCE_HSI;
-  RCC_OscInitStruct.PLL.PLLMUL = RCC_PLL_MUL12;
-  RCC_OscInitStruct.PLL.PREDIV = RCC_PREDIV_DIV16;
+  RCC_OscInitStruct.PLL.PLLSource = RCC_PLLSOURCE_HSE;
+  RCC_OscInitStruct.PLL.PLLMUL = RCC_PLL_MUL4;
+  RCC_OscInitStruct.PLL.PREDIV = RCC_PREDIV_DIV1;
   if (HAL_RCC_OscConfig(&RCC_OscInitStruct) != HAL_OK)
   {
     Error_Handler();
@@ -745,7 +719,7 @@ static void MX_SPI1_Init(void)
   hspi1.Init.CLKPolarity = SPI_POLARITY_LOW;
   hspi1.Init.CLKPhase = SPI_PHASE_1EDGE;
   hspi1.Init.NSS = SPI_NSS_SOFT;
-  hspi1.Init.BaudRatePrescaler = SPI_BAUDRATEPRESCALER_64;
+  hspi1.Init.BaudRatePrescaler = SPI_BAUDRATEPRESCALER_128;
   hspi1.Init.FirstBit = SPI_FIRSTBIT_MSB;
   hspi1.Init.TIMode = SPI_TIMODE_DISABLE;
   hspi1.Init.CRCCalculation = SPI_CRCCALCULATION_DISABLE;
@@ -759,46 +733,6 @@ static void MX_SPI1_Init(void)
   /* USER CODE BEGIN SPI1_Init 2 */
 
   /* USER CODE END SPI1_Init 2 */
-
-}
-
-/**
-  * @brief SPI2 Initialization Function
-  * @param None
-  * @retval None
-  */
-static void MX_SPI2_Init(void)
-{
-
-  /* USER CODE BEGIN SPI2_Init 0 */
-
-  /* USER CODE END SPI2_Init 0 */
-
-  /* USER CODE BEGIN SPI2_Init 1 */
-
-  /* USER CODE END SPI2_Init 1 */
-  /* SPI2 parameter configuration*/
-  hspi2.Instance = SPI2;
-  hspi2.Init.Mode = SPI_MODE_MASTER;
-  hspi2.Init.Direction = SPI_DIRECTION_2LINES;
-  hspi2.Init.DataSize = SPI_DATASIZE_8BIT;
-  hspi2.Init.CLKPolarity = SPI_POLARITY_LOW;
-  hspi2.Init.CLKPhase = SPI_PHASE_1EDGE;
-  hspi2.Init.NSS = SPI_NSS_SOFT;
-  hspi2.Init.BaudRatePrescaler = SPI_BAUDRATEPRESCALER_16;
-  hspi2.Init.FirstBit = SPI_FIRSTBIT_MSB;
-  hspi2.Init.TIMode = SPI_TIMODE_DISABLE;
-  hspi2.Init.CRCCalculation = SPI_CRCCALCULATION_DISABLE;
-  hspi2.Init.CRCPolynomial = 7;
-  hspi2.Init.CRCLength = SPI_CRC_LENGTH_DATASIZE;
-  hspi2.Init.NSSPMode = SPI_NSS_PULSE_ENABLE;
-  if (HAL_SPI_Init(&hspi2) != HAL_OK)
-  {
-    Error_Handler();
-  }
-  /* USER CODE BEGIN SPI2_Init 2 */
-
-  /* USER CODE END SPI2_Init 2 */
 
 }
 
@@ -869,10 +803,10 @@ static void MX_GPIO_Init(void)
   __HAL_RCC_GPIOB_CLK_ENABLE();
 
   /*Configure GPIO pin Output Level */
-  HAL_GPIO_WritePin(GPIOA, pll_MOD_Pin|fault_mcu_adc_Pin|rst_pwd_mcu_adc_Pin|Q2_mcu_Pin, GPIO_PIN_RESET);
+  HAL_GPIO_WritePin(GPIOA, pll_MOD_Pin|Q2_mcu_Pin, GPIO_PIN_RESET);
 
   /*Configure GPIO pin Output Level */
-  HAL_GPIO_WritePin(GPIOB, spi_CE_pll_Pin|LE_pll_Pin|CS_bgt_Pin|ADC_SS_Pin, GPIO_PIN_RESET);
+  HAL_GPIO_WritePin(GPIOB, spi_CE_pll_Pin|LE_pll_Pin|CS_bgt_Pin, GPIO_PIN_RESET);
 
   /*Configure GPIO pins : PC13 PC14 PC15 */
   GPIO_InitStruct.Pin = GPIO_PIN_13|GPIO_PIN_14|GPIO_PIN_15;
@@ -880,21 +814,23 @@ static void MX_GPIO_Init(void)
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   HAL_GPIO_Init(GPIOC, &GPIO_InitStruct);
 
-  /*Configure GPIO pins : pll_MOD_Pin fault_mcu_adc_Pin rst_pwd_mcu_adc_Pin Q2_mcu_Pin */
-  GPIO_InitStruct.Pin = pll_MOD_Pin|fault_mcu_adc_Pin|rst_pwd_mcu_adc_Pin|Q2_mcu_Pin;
+  /*Configure GPIO pins : pll_MOD_Pin Q2_mcu_Pin */
+  GPIO_InitStruct.Pin = pll_MOD_Pin|Q2_mcu_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
   HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
 
-  /*Configure GPIO pins : PA6 PA12 PA15 */
-  GPIO_InitStruct.Pin = GPIO_PIN_6|GPIO_PIN_12|GPIO_PIN_15;
+  /*Configure GPIO pins : PA1 PA2 PA6 PA12 
+                           PA15 */
+  GPIO_InitStruct.Pin = GPIO_PIN_1|GPIO_PIN_2|GPIO_PIN_6|GPIO_PIN_12 
+                          |GPIO_PIN_15;
   GPIO_InitStruct.Mode = GPIO_MODE_ANALOG;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
 
-  /*Configure GPIO pins : spi_CE_pll_Pin LE_pll_Pin CS_bgt_Pin ADC_SS_Pin */
-  GPIO_InitStruct.Pin = spi_CE_pll_Pin|LE_pll_Pin|CS_bgt_Pin|ADC_SS_Pin;
+  /*Configure GPIO pins : spi_CE_pll_Pin LE_pll_Pin CS_bgt_Pin */
+  GPIO_InitStruct.Pin = spi_CE_pll_Pin|LE_pll_Pin|CS_bgt_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
@@ -906,9 +842,11 @@ static void MX_GPIO_Init(void)
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   HAL_GPIO_Init(MUX_pll_GPIO_Port, &GPIO_InitStruct);
 
-  /*Configure GPIO pins : PB11 PB3 PB4 PB5 
+  /*Configure GPIO pins : PB11 PB12 PB13 PB14 
+                           PB15 PB3 PB4 PB5 
                            PB6 PB7 PB8 PB9 */
-  GPIO_InitStruct.Pin = GPIO_PIN_11|GPIO_PIN_3|GPIO_PIN_4|GPIO_PIN_5 
+  GPIO_InitStruct.Pin = GPIO_PIN_11|GPIO_PIN_12|GPIO_PIN_13|GPIO_PIN_14 
+                          |GPIO_PIN_15|GPIO_PIN_3|GPIO_PIN_4|GPIO_PIN_5 
                           |GPIO_PIN_6|GPIO_PIN_7|GPIO_PIN_8|GPIO_PIN_9;
   GPIO_InitStruct.Mode = GPIO_MODE_ANALOG;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
