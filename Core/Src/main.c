@@ -63,9 +63,8 @@ void LMX2491_Saw(void);
 
 void BGT24MTR_reg_init(void)
 {	
-	uint16_t BGT_data1 = 0x0058;
-	
-  
+	uint16_t BGT_data1 = 0x5800;
+
 	HAL_GPIO_WritePin(GPIOB, CS_bgt_Pin, GPIO_PIN_RESET);
 	HAL_GPIO_WritePin(GPIOB, LE_pll_Pin, GPIO_PIN_SET);
 	Delay_u(1000);
@@ -80,7 +79,7 @@ void TEST(void)
 	HAL_GPIO_WritePin(GPIOA, pll_MOD_Pin, GPIO_PIN_SET);
 	HAL_Delay(50);
 	HAL_GPIO_WritePin(GPIOA, pll_MOD_Pin, GPIO_PIN_RESET);
-	HAL_Delay(50);
+	HAL_Delay(1);
 }
 void LMX2491_Soft_reset(void) // reset all registers in PLL
 {
@@ -442,12 +441,12 @@ int main(void)
   MX_USART1_UART_Init();
   MX_DAC1_Init();
   /* USER CODE BEGIN 2 */
-
-    LMX2491_Soft_reset();
+    LMX2491_Saw();
 	HAL_Delay(500);
-	LMX2491_Saw();
 	SPI1->CR1 &= ~SPI_CR1_SPE;  // disable SPI
+	HAL_Delay(500);
 	SPI1->CR1 |= SPI_CR1_CPHA;  // reverse cpha
+	HAL_Delay(500);
 	SPI1->CR1 &= SPI_CR1_SPE;   // enable SPI
 	HAL_Delay(500);
 	BGT24MTR_reg_init();
@@ -481,12 +480,13 @@ void SystemClock_Config(void)
 
   /** Initializes the CPU, AHB and APB busses clocks 
   */
-  RCC_OscInitStruct.OscillatorType = RCC_OSCILLATORTYPE_LSI|RCC_OSCILLATORTYPE_HSE;
-  RCC_OscInitStruct.HSEState = RCC_HSE_ON;
+  RCC_OscInitStruct.OscillatorType = RCC_OSCILLATORTYPE_HSI|RCC_OSCILLATORTYPE_LSI;
+  RCC_OscInitStruct.HSIState = RCC_HSI_ON;
+  RCC_OscInitStruct.HSICalibrationValue = RCC_HSICALIBRATION_DEFAULT;
   RCC_OscInitStruct.LSIState = RCC_LSI_ON;
   RCC_OscInitStruct.PLL.PLLState = RCC_PLL_ON;
-  RCC_OscInitStruct.PLL.PLLSource = RCC_PLLSOURCE_HSE;
-  RCC_OscInitStruct.PLL.PLLMUL = RCC_PLL_MUL4;
+  RCC_OscInitStruct.PLL.PLLSource = RCC_PLLSOURCE_HSI;
+  RCC_OscInitStruct.PLL.PLLMUL = RCC_PLL_MUL12;
   RCC_OscInitStruct.PLL.PREDIV = RCC_PREDIV_DIV1;
   if (HAL_RCC_OscConfig(&RCC_OscInitStruct) != HAL_OK)
   {
@@ -669,6 +669,12 @@ static void MX_GPIO_Init(void)
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   HAL_GPIO_Init(GPIOC, &GPIO_InitStruct);
 
+  /*Configure GPIO pins : PF0 PF1 PF6 PF7 */
+  GPIO_InitStruct.Pin = GPIO_PIN_0|GPIO_PIN_1|GPIO_PIN_6|GPIO_PIN_7;
+  GPIO_InitStruct.Mode = GPIO_MODE_ANALOG;
+  GPIO_InitStruct.Pull = GPIO_NOPULL;
+  HAL_GPIO_Init(GPIOF, &GPIO_InitStruct);
+
   /*Configure GPIO pins : pll_MOD_Pin Q2_mcu_Pin */
   GPIO_InitStruct.Pin = pll_MOD_Pin|Q2_mcu_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
@@ -720,12 +726,6 @@ static void MX_GPIO_Init(void)
   GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   HAL_GPIO_Init(BGT_ANA_GPIO_Port, &GPIO_InitStruct);
-
-  /*Configure GPIO pins : PF6 PF7 */
-  GPIO_InitStruct.Pin = GPIO_PIN_6|GPIO_PIN_7;
-  GPIO_InitStruct.Mode = GPIO_MODE_ANALOG;
-  GPIO_InitStruct.Pull = GPIO_NOPULL;
-  HAL_GPIO_Init(GPIOF, &GPIO_InitStruct);
 
 }
 
