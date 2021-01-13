@@ -48,7 +48,7 @@
 /* Private variables ---------------------------------------------------------*/
 
 /* USER CODE BEGIN PV */
-
+uint16_t reg = 0x0001;
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -457,7 +457,7 @@ int main(void)
   /* USER CODE BEGIN WHILE */
   while (1)
   {
-	  
+	  HAL_SPI_Transmit(&hspi1, (uint8_t*)&reg, sizeof(reg), 100);
 	  //TEST();
     /* USER CODE END WHILE */
 
